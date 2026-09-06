@@ -1,257 +1,92 @@
-#include<iostream>
-#include<string>
+#include <algorithm>
+#include <cctype>
+#include <cstdlib>
+#include <iostream>
+#include <limits>
+#include <stdexcept>
+#include <string>
 
 using namespace std;
 
-
-
-// Function to Convert
-// Hexadecimal Number to Octal Number
-string hexaToOcta(string str)
+bool isIN_R(int base)
 {
-    // array to store binary data
-    char binary[300];
-    int size = 0;
-    int p = 0;
-    // getting and mapping each value into binary
-    for (int i = 0; i < str.length(); i++)
-    {
-        switch (str[i])
-        {
-        case '0':
-            binary[p] = '0';
-            binary[p + 1] = '0';
-            binary[p + 2] = '0';
-            binary[p + 3] = '0';
-            break;
-        case '1':
-            binary[p] = '0';
-            binary[p + 1] = '0';
-            binary[p + 2] = '0';
-            binary[p + 3] = '1';
-            break;
-        case '2':
-            binary[p] = '0';
-            binary[p + 1] = '0';
-            binary[p + 2] = '1';
-            binary[p + 3] = '0';
-            break;
-        case '3':
-            binary[p] = '0';
-            binary[p + 1] = '0';
-            binary[p + 2] = '1';
-            binary[p + 3] = '1';
-            break;
-        case '4':
-            binary[p] = '0';
-            binary[p + 1] = '1';
-            binary[p + 2] = '0';
-            binary[p + 3] = '0';
-            break;
-        case '5':
-            binary[p] = '0';
-            binary[p + 1] = '1';
-            binary[p + 2] = '0';
-            binary[p + 3] = '1';
-            break;
-        case '6':
-            binary[p] = '0';
-            binary[p + 1] = '1';
-            binary[p + 2] = '1';
-            binary[p + 3] = '0';
-            break;
-        case '7':
-            binary[p] = '0';
-            binary[p + 1] = '1';
-            binary[p + 2] = '1';
-            binary[p + 3] = '1';
-            break;
-        case '8':
-            binary[p] = '1';
-            binary[p + 1] = '0';
-            binary[p + 2] = '0';
-            binary[p + 3] = '0';
-            break;
-        case '9':
-            binary[p] = '1';
-            binary[p + 1] = '0';
-            binary[p + 2] = '0';
-            binary[p + 3] = '1';
-            break;
-        case 'A':
-            binary[p] = '1';
-            binary[p + 1] = '0';
-            binary[p + 2] = '1';
-            binary[p + 3] = '0';
-            break;
-        case 'B':
-            binary[p] = '1';
-            binary[p + 1] = '0';
-            binary[p + 2] = '1';
-            binary[p + 3] = '1';
-            break;
-        case 'C':
-            binary[p] = '1';
-            binary[p + 1] = '1';
-            binary[p + 2] = '0';
-            binary[p + 3] = '0';
-            break;
-        case 'D':
-            binary[p] = '1';
-            binary[p + 1] = '1';
-            binary[p + 2] = '0';
-            binary[p + 3] = '1';
-            break;
-        case 'E':
-            binary[p] = '1';
-            binary[p + 1] = '1';
-            binary[p + 2] = '1';
-            binary[p + 3] = '0';
-            break;
-        case 'F':
-            binary[p] = '1';
-            binary[p + 1] = '1';
-            binary[p + 2] = '1';
-            binary[p + 3] = '1';
-            break;
-        }
-
-        p += 4;
-    }
-
-    string binry(binary, p);
-
-    while(binry.length() % 3 != 0)
-    {
-        binry.insert(0, "0");
-    }
-
-    int len = (str.length() * 4);
-
-    //array to store octa numbers
-    char octa[200];
-    int s2 = 0;
-
-    int q = 0;
-    // getting and maping each data to octa one
-    for (int i = 0; i < len - 2; i += 3)
-    {
-        q = (4 * (binry[i] - 48)) + (2 * (int(binry[i + 1]) - 48)) + (1 * (int(binry[i + 2]) - 48));
-        octa[s2] = (q + 48);
-        s2++;
-    }
-
-    string str4(octa, s2);
-
-    while (str4[0] == '0')
-    {
-        str4.erase(0, 1);
-    }
-
-    return str4;
+    return (base >= 2 && base <= 10) || base == 16;
 }
 
-
-
-//function to check weither the given base is in list or not
-bool isIN_R(int num)
+int to_Int(char digit)
 {
-    // list
-    int R[] = {2,3,4,5,6,7,8,9,10,16};
-
-    for (int i = 0; i < 10; i++)
-    {
-        if(num == R[i])
-        {
-            return true;
-        }
-    }
-    return false;
-    
+    if (digit >= '0' && digit <= '9') return digit - '0';
+    if (digit >= 'A' && digit <= 'F') return digit - 'A' + 10;
+    if (digit >= 'a' && digit <= 'f') return digit - 'a' + 10;
+    return -1;
 }
 
-
-//function to convert char to int value
-int to_Int(char chart)
+bool isValid(string number, int base)
 {
-    if (chart >= 48 && chart <= 57) // check for hexadecimal value input
+    if (!isIN_R(base) || number.empty()) return false;
+    for (unsigned char digit : number)
     {
-        return ((int)chart - 48); //converting char to int then setting correct value
-    }
-    else
-    {
-        return ((int)chart - 65 + 10); 
-    }
-}
-
-//function to convert Given any based value to the decimal value
-int toDecimal(string str, int base)
-{
-    int size = str.length();
-    int pow = 1; 
-    int num = 0;
-    int i;
- 
-    // using method 1*2^2 + 0*2^1 + 1*2^0
-    for (i = size - 1; i >= 0; i--)
-    {
-        num = num + (to_Int(str[i]) * pow);
-        pow = pow * base;
-    }
-    
-    // a decimal number
-    return num;
-}
-
-// function to convet given number to char
-char tochar(int num)
-{
-    if (num >= 0 && num <= 9)
-    {
-        return (char)(num + 48);
-    }
-    else
-    {
-        return (char)(num - 75);
-    }
-}
-
-// function to convert given decimal number to base number
-string toBaseNumber(int dec, int base)
-{
-    // arrays to store numbers
-    char str1[200], str2[200];
-    int s1 = 0;
-    int s2 = 0;
-    // using :=> 40%2 -> 20%2 -> 10%2 -> 5%2 -> 2%2 
-    while(dec > 0)
-    {
-        str1[s1] = tochar(dec % base);
-        dec = dec / base;
-        s1++;
-    }
-    // reversing the getted number characters
-    for(int i = s1-1; i >= 0; i--)
-    {
-        str2[s2] = str1[i];
-        s2++;
-    }
-    return string(str2, s2);
-}
-
-//function to check validation of input string
-bool isValid(string str, int base)
-{
-    for (int i = 0; i < str.length(); i++)
-    {
-        if (to_Int(str[i]) >= base)
-        {
-            return false;
-        }
+        if (!std::isxdigit(digit) || to_Int(digit) >= base) return false;
     }
     return true;
 }
 
+// Preserve the hexadecimal -> binary -> octal conversion path.
+string hexaToOcta(string number)
+{
+    if (!isValid(number, 16)) throw invalid_argument("Invalid hexadecimal number");
+    string binary;
+    for (char digit : number)
+    {
+        int value = to_Int(digit);
+        for (int bit = 3; bit >= 0; --bit)
+            binary += ((value >> bit) & 1) ? '1' : '0';
+    }
+    binary.insert(0, (3 - binary.size() % 3) % 3, '0');
+    string octal;
+    for (size_t i = 0; i < binary.size(); i += 3)
+    {
+        int value = 4 * (binary[i] - '0') + 2 * (binary[i + 1] - '0') +
+                    (binary[i + 2] - '0');
+        octal += static_cast<char>('0' + value);
+    }
+    size_t first = octal.find_first_not_of('0');
+    return first == string::npos ? "0" : octal.substr(first);
+}
+
+int toDecimal(string number, int base)
+{
+    if (!isValid(number, base)) throw invalid_argument("Invalid number or base");
+    int value = 0;
+    for (char digit : number)
+    {
+        int next = to_Int(digit);
+        if (value > (numeric_limits<int>::max() - next) / base)
+            throw overflow_error("Number exceeds the supported integer range");
+        value = value * base + next;
+    }
+    return value;
+}
+
+char tochar(int digit)
+{
+    if (digit < 0 || digit > 15) throw invalid_argument("Invalid digit");
+    return "0123456789ABCDEF"[digit];
+}
+
+string toBaseNumber(int decimal, int base)
+{
+    if (!isIN_R(base) || decimal < 0) throw invalid_argument("Invalid number or base");
+    if (decimal == 0) return "0";
+    string result;
+    while (decimal > 0)
+    {
+        result += tochar(decimal % base);
+        decimal /= base;
+    }
+    reverse(result.begin(), result.end());
+    return result;
+}
 
 //========================================================
 //          main
@@ -284,7 +119,7 @@ int main()
         cout << "(16) HEXADECIMAL\n";
         cout << "INPUT ANY OTHER VALUE TO EXIT THE PROGRAM.\n";
         cout << "=====================================\n";
-        cin >> base;
+        if (!(cin >> base)) return 0;
         // check input validation and quiting option
         if(!isIN_R(base))
         {
@@ -293,7 +128,7 @@ int main()
             cout << "=====================================\n";
             cout << "ARE YOU SURE YOU WANT TO QUIT THE PRO-\n";
             cout << "GRAM?(Y/N)\n";
-            cin >> ch;
+            if (!(cin >> ch)) return 0;
             if(ch == 'Y')
             {
                 cout << "BYE! \n";
@@ -312,7 +147,7 @@ int main()
             cout << "Source Number System : " << base << "  =================\n";
             cout << "==========================================\n";
             cout << "CHOOSE YOUR TARGET NUMBER SYSTEM: ";
-            cin >> base2;
+            if (!(cin >> base2)) return 0;
             // check input validation and quiting option
             if (!isIN_R(base2))
             {
@@ -321,7 +156,7 @@ int main()
                 cout << "=====================================\n";
                 cout << "ARE YOU SURE YOU WANT TO QUIT THE PRO-\n";
                 cout << "GRAM?(Y/N)\n";
-                cin >> ch;
+                if (!(cin >> ch)) return 0;
                 if (ch == 'Y')
                 {
                     cout << "BYE! \n";
@@ -420,7 +255,7 @@ int main()
             }
 
             cout << str1 << ": ";
-            cin >> input;
+            if (!(cin >> input)) return 0;
             int i = 1;
             bool check = true;
             /*
@@ -432,7 +267,7 @@ int main()
             {
                 cout << "NOT A VALID NUMBER!TRY AGAIN :\n";
                 cout << str1 << ": ";
-                cin >> input;
+                if (!(cin >> input)) return 0;
                 i++;
                 if (i == 5)
                 {
@@ -459,8 +294,15 @@ int main()
                 else
                 {
                     cout << str2;
-                    decimal = toDecimal(input, base);
-                    cout << ": " << toBaseNumber(decimal, base2) << endl;
+                    try
+                    {
+                        decimal = toDecimal(input, base);
+                        cout << ": " << toBaseNumber(decimal, base2) << endl;
+                    }
+                    catch (const overflow_error& error)
+                    {
+                        cout << ": " << error.what() << endl;
+                    }
                     cout << "YOU WILL BE RETURNED TO THE MAIN MENU.\n";
                 }
             }
